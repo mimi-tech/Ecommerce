@@ -1,0 +1,58 @@
+#images .img-responsive{
+   width: auto;
+    height: 200px;
+}
+img .details{
+    width: 33%;
+    margin: 15px auto;
+}
+
+body{
+    background: red;
+}
+
+.table-auto{
+    width: auto;
+}
+
+
+$mail->Body    .= '<p><b>product Name:</b>&nbsp;&nbsp;&nbsp;'.$product['title'].'</p>';
+$mail->Body    .= '<p><b>product Price:</b>&nbsp;&nbsp;&nbsp;'.$product['price'].'</p>'; 
+$mail->Body    .= '<p><b>product Size:</b>&nbsp;&nbsp;&nbsp;'.$size['size'].'</p>'; 
+$mail->Body    .= '<p><b>product Quantity:</b>&nbsp;&nbsp;&nbsp;'.$size['quantity'].'</p>';
+$mail->Body    .= '<p><b>product Name:</b>&nbsp;&nbsp;&nbsp;'.$item['category'].'</p>'; 
+
+
+$sqly = "SELECT * FROM post_voters ";
+$featured = $db->query($sqly);
+
+?>
+<?php while($product = mysqli_fetch_assoc($featured)) :?>
+ <?php
+$prod_id =$product['product_id'];
+$prod_title =$product['items'];
+$prod_size =$product['sizes'];
+$prod_quantity =$product['quantity'];
+$productQ = $db->query("SELECT sizes FROM products WHERE id = '$prod_id'");
+$product = mysqli_fetch_assoc($productQ);
+$sizes = sizesToArray($product['sizes']);
+foreach($sizes as $size){
+   // echo $size['quantity'];
+    if($size['size'] == $prod_size){
+     $q = $size['quantity'] - $prod_quantity;
+        $newSizes[] = array('size' => $size['size'],'quantity' => $q);
+    }
+}
+     
+    
+$kl = sizesToString($newSizes);
+$urp_query = "UPDATE products SET sizes = '{$kl}' WHERE id = '{$prod_id}' AND title = '{$prod_title}'";
+$fea = $db->query($urp_query);
+if($fea){
+  $del ="DELETE  * FROM `post_voters`" ; 
+    $Qdel = $db->query($del);
+}
+
+ ?>  
+
+ <?php endwhile; ?>  
